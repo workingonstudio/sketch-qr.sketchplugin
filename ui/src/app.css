@@ -1,12 +1,41 @@
 @import "tailwindcss";
 
+/* Global font smoothing for all themes */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+  /* Typography */
+  --font-body: "Satoshi";
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+
+  /* Shared text sizes */
+  --text-xxs: 0.6875rem;
+  --text-xxs--line-height: calc(1 / 0.6875);
+
+  /* Colors */
+  --color-primary: theme(colors.gray.100);
+  --color-body: theme(colors.gray.800);
+  --color-muted: theme(colors.gray.500);
+  --color-border: theme(colors.gray.300);
+  --color-text: theme(colors.gray.100);
+  --color-bg-main: theme(colors.gray.950);
+}
+
+html {
+  @apply h-dvh;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--color-body);
+  @apply h-dvh;
+  @apply bg-white;
+  @apply p-6;
 }
 
 #app {
-  width: 400px;
-  height: 500px;
+  @apply h-dvh;
 }

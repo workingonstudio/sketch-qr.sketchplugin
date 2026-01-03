@@ -25,11 +25,11 @@ export function onOpen(context) {
   // Browser window options
   const options = {
     identifier: "studio.workingon.plugin.webview",
-    width: 400,
-    height: 500,
+    width: 420,
+    height: 420,
     show: false,
     alwaysOnTop: true,
-    titleBarStyle: "hiddenInset",
+    titleBarStyle: "default",
     backgroundColor: "#FFFFFF",
     hasShadow: true,
     acceptsFirstMouse: true,
