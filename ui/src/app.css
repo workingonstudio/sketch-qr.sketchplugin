@@ -4,6 +4,7 @@
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply transition-all duration-75;
 }
 
 @theme {
@@ -37,5 +38,4 @@ body {
 }
 
 #app {
-  @apply h-dvh;
 }
