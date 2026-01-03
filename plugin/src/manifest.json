@@ -1,0 +1,21 @@
+{
+  "name": "Sketch QR Generator",
+  "description": "Generate SVG QR codes from within Sketch.",
+  "author": "workingon.studio",
+  "version": "1.0.0",
+  "identifier": "studio.workingon.sketch-qr",
+  "compatibleVersion": "99",
+  "bundleVersion": 1,
+  "commands": [
+    {
+      "name": "Open Plugin",
+      "identifier": "openPlugin",
+      "script": "main.js",
+      "handler": "onOpen"
+    }
+  ],
+  "menu": {
+    "title": "Sketch QR Generator",
+    "items": ["openPlugin"]
+  }
+}

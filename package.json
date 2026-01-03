@@ -1,0 +1,22 @@
+{
+  "name": "sketch-qr",
+  "version": "1.0.0",
+  "description": "Generate SVG QR codes from within Sketch.",
+  "private": true,
+  "workspaces": [
+    "plugin",
+    "ui"
+  ],
+  "scripts": {
+    "dev:ui": "npm run dev --workspace=ui",
+    "build:ui": "npm run build --workspace=ui",
+    "build:plugin": "npm run build --workspace=plugin",
+    "build": "npm run build:ui && npm run build:plugin",
+    "link": "npm run link --workspace=plugin",
+    "watch": "npm run watch --workspace=plugin",
+    "clean": "rm -rf plugin/sketch-qr.sketchplugin ui/dist node_modules plugin/node_modules ui/node_modules"
+  },
+  "author": "workingon.studio",
+  "license": "MIT",
+  "devDependencies": {}
+}
