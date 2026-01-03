@@ -2,10 +2,19 @@
   import { createForm } from "felte";
   import { validator } from "@felte/validator-yup";
   import * as yup from "yup";
+  import QRCodeStyling from "qr-code-styling";
+  import { onMount } from "svelte";
+
+  let qrContainer: HTMLDivElement;
+  let qrCode: QRCodeStyling | null = null;
+  let isGenerating = false;
+  let hasChangedSinceGenerate = false;
+
+  const PREVIEW_SIZE = 150;
 
   const schema = yup.object({
     url: yup.string().url().required(),
-    color: yup.string().length(7).required(),
+    color: yup.string().required(),
     size: yup.number().required(),
     margin: yup.number().required(),
   });
@@ -18,15 +27,85 @@
       margin: 4,
     },
     extend: validator({ schema }),
-    onSubmit: (values) => {
-      console.log("Form submitted:", values);
+    onSubmit: async (values) => {
+      isGenerating = true;
+      await generateQRCode(values);
+      isGenerating = false;
+      hasChangedSinceGenerate = false;
     },
   });
+
+  $: if ($data) {
+    hasChangedSinceGenerate = true;
+  }
+
+  onMount(() => {
+    qrCode = new QRCodeStyling({
+      width: PREVIEW_SIZE,
+      height: PREVIEW_SIZE,
+      data: $data.url,
+      margin: 0,
+      type: "svg",
+      dotsOptions: {
+        color: $data.color,
+        type: "square",
+      },
+      cornersSquareOptions: {
+        color: $data.color,
+        type: "square",
+      },
+      cornersDotOptions: {
+        color: $data.color,
+        type: "square",
+      },
+    });
+
+    qrCode.append(qrContainer);
+  });
+
+  async function generateQRCode(values: yup.InferType<typeof schema>) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    if (qrCode) {
+      qrCode.update({
+        data: values.url,
+        width: PREVIEW_SIZE,
+        height: PREVIEW_SIZE,
+        margin: 0,
+        dotsOptions: {
+          color: values.color,
+          type: "square",
+        },
+        cornersSquareOptions: {
+          color: values.color,
+          type: "square",
+        },
+        cornersDotOptions: {
+          color: values.color,
+          type: "square",
+        },
+      });
+    }
+  }
 </script>
 
 <section class="flex flex-col gap-6">
-  <div class="flex flex-col items-center">
-    <div class="flex border border-border rounded-lg size-37.5"></div>
+  <div class="flex flex-col items-center relative">
+    <div
+      bind:this={qrContainer}
+      class="flex border border-border rounded-lg size-37.5 items-center justify-center overflow-hidden p-2"
+    />
+
+    {#if isGenerating}
+      <div
+        class="absolute inset-0 bg-white flex items-center justify-center rounded-lg"
+      >
+        <iconify-icon
+          icon="lucide:loader-circle"
+          class="text-2xl animate-spin text-gray-600"
+        />
+      </div>
+    {/if}
   </div>
   <form
     use:form
@@ -63,11 +142,12 @@
             class="w-full"
             name="color"
             maxlength="7"
+            placeholder="#1E2939"
           />
         </label>
         <label
           for="number-input"
-          class="w-fit"
+          class="w-full"
         >
           <iconify-icon
             icon="material-symbols:open-in-full-rounded"
@@ -102,8 +182,8 @@
     <div class="flex flex-row justify-between">
       <button
         type="submit"
-        disabled={!$isValid}
-        class="default">Generate</button
+        disabled={!$isValid || isGenerating || !hasChangedSinceGenerate}
+        class="default">Update preview</button
       >
       <button
         type="button"
