@@ -87,6 +87,52 @@
       });
     }
   }
+
+  async function insertQRCode() {
+    if (!qrCode) return;
+
+    try {
+      const finalQRCode = new QRCodeStyling({
+        width: $data.size,
+        height: $data.size,
+        data: $data.url,
+        margin: $data.margin,
+        type: "svg",
+        dotsOptions: {
+          color: $data.color,
+          type: "square",
+        },
+        cornersSquareOptions: {
+          color: $data.color,
+          type: "square",
+        },
+        cornersDotOptions: {
+          color: $data.color,
+          type: "square",
+        },
+        backgroundOptions: {
+          color: "transparent",
+        },
+      });
+
+      const svgData = await finalQRCode.getRawData("svg");
+      if (!svgData) {
+        console.error("No SVG data available");
+        return;
+      }
+
+      const svgText =
+        "text" in svgData ? await svgData.text() : svgData.toString();
+      (window as any).postMessage(
+        "insertQRCode",
+        svgText,
+        $data.size,
+        $data.margin
+      );
+    } catch (error) {
+      console.error("Error getting QR code:", error);
+    }
+  }
 </script>
 
 <section class="flex flex-col gap-6">
@@ -187,8 +233,12 @@
       >
       <button
         type="button"
-        class="primary">Insert QR code</button
+        class="primary"
+        on:click={insertQRCode}
+        disabled={!qrCode}
       >
+        Insert QR code
+      </button>
     </div>
   </form>
 </section>

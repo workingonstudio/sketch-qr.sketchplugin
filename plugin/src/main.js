@@ -1,6 +1,5 @@
 const BrowserWindow = require("sketch-module-web-view");
 
-// Set to true for development (loads from localhost:5173)
 const DEV_MODE = true;
 
 let browserWindow = null;
@@ -44,6 +43,11 @@ export function onOpen(context) {
 
   browserWindow = new BrowserWindow(options);
 
+  // Listen for insertQRCode message from webview
+  browserWindow.webContents.on("insertQRCode", (svg, size, margin) => {
+    insertQRIntoSketch(context, svg, size, margin);
+  });
+
   // Load URL
   if (DEV_MODE) {
     browserWindow.loadURL("http://localhost:5173");
@@ -65,9 +69,27 @@ export function onOpen(context) {
   browserWindow.on("closed", () => {
     browserWindow = null;
   });
+}
 
-  // Example: Listen for messages from webview
-  // browserWindow.webContents.on("someEvent", (data) => {
-  //   console.log("Received from webview:", data);
-  // });
+function insertQRIntoSketch(context, svgString, size, margin) {
+  const sketch = require("sketch/dom");
+  const UI = require("sketch/ui");
+
+  try {
+    const document = sketch.getSelectedDocument();
+    const selectedPage = document.selectedPage;
+
+    // Import SVG - returns a Group with all the QR code shapes
+    const importedGroup = sketch.createLayerFromData(svgString, "svg");
+
+    if (importedGroup) {
+      importedGroup.name = "QR Code";
+      selectedPage.layers.push(importedGroup);
+
+      UI.message(`✓ QR Code inserted (${size}x${size}px)`);
+    }
+  } catch (error) {
+    console.error("Error inserting QR code:", error);
+    UI.message(`✗ Failed to insert QR code: ${error.message}`);
+  }
 }
