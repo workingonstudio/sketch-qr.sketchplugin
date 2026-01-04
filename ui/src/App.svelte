@@ -178,7 +178,7 @@
           class="w-fit"
         >
           <iconify-icon
-            icon="material-symbols:resize-rounded"
+            icon="material-symbols:fullscreen-rounded"
             class="text-base text-muted"
             title="Margin"
           ></iconify-icon>

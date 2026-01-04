@@ -1,5 +1,5 @@
 {
-  "name": "Sketch QR Generator",
+  "name": "QR Code Generator",
   "description": "Generate SVG QR codes from within Sketch.",
   "author": "workingon.studio",
   "version": "1.0.0",
