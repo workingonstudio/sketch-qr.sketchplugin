@@ -4,7 +4,7 @@
   "author": "workingon.studio",
   "version": "1.0.0",
   "identifier": "studio.workingon.sketch-qr",
-  "compatibleVersion": "99",
+  "compatibleVersion": "3",
   "bundleVersion": 1,
   "commands": [
     {
@@ -15,7 +15,7 @@
     }
   ],
   "menu": {
-    "title": "Sketch QR Generator",
+    "title": "QR Generator",
     "items": ["openPlugin"]
   }
 }
