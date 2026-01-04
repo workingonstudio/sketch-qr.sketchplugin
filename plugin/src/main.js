@@ -79,17 +79,28 @@ function insertQRIntoSketch(context, svgString, size, margin) {
     const document = sketch.getSelectedDocument();
     const selectedPage = document.selectedPage;
 
-    // Import SVG - returns a Group with all the QR code shapes
-    const importedGroup = sketch.createLayerFromData(svgString, "svg");
+    const wrappedLayer = sketch.createLayerFromData(svgString, "svg");
 
-    if (importedGroup) {
-      importedGroup.name = "QR Code";
-      selectedPage.layers.push(importedGroup);
+    if (wrappedLayer && wrappedLayer.layers && wrappedLayer.layers.length > 0) {
+      wrappedLayer.name = "QR Code";
 
-      UI.message(`✓ QR Code inserted (${size}x${size}px)`);
+      console.log(
+        "Imported QR dimensions:",
+        wrappedLayer.frame.width,
+        "x",
+        wrappedLayer.frame.height
+      );
+
+      selectedPage.layers.push(wrappedLayer);
+
+      UI.message(
+        `✓ QR Code inserted (${size}x${size}px with ${margin}px margin)`
+      );
+    } else {
+      UI.message("✗ SVG imported but contains no layers");
     }
   } catch (error) {
     console.error("Error inserting QR code:", error);
-    UI.message(`✗ Failed to insert QR code: ${error.message}`);
+    UI.message(`✗ Failed: ${error.message}`);
   }
 }

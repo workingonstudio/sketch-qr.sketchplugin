@@ -21,10 +21,10 @@
 
   const { form, data, isValid } = createForm<yup.InferType<typeof schema>>({
     initialValues: {
-      url: "https://workingon.studio",
-      color: "#1E2939",
+      url: "https://wo.studio",
+      color: "#000000",
       size: 150,
-      margin: 4,
+      margin: 0,
     },
     extend: validator({ schema }),
     onSubmit: async (values) => {
@@ -92,11 +92,18 @@
     if (!qrCode) return;
 
     try {
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      document.body.appendChild(tempContainer);
+
+      // Generate at a larger size for better quality, margin 0
+      const generateSize = 300;
       const finalQRCode = new QRCodeStyling({
-        width: $data.size,
-        height: $data.size,
+        width: generateSize,
+        height: generateSize,
         data: $data.url,
-        margin: $data.margin,
+        margin: 0,
         type: "svg",
         dotsOptions: {
           color: $data.color,
@@ -115,20 +122,171 @@
         },
       });
 
-      const svgData = await finalQRCode.getRawData("svg");
-      if (!svgData) {
-        console.error("No SVG data available");
-        return;
+      finalQRCode.append(tempContainer);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const svgElement = tempContainer.querySelector("svg");
+
+      if (svgElement) {
+        const dotClipPath = svgElement.querySelector(
+          'clipPath[id*="dot-color"]'
+        );
+        const cornerSquarePaths = svgElement.querySelectorAll(
+          'clipPath[id*="corners-square"]'
+        );
+        const cornerDotPaths = svgElement.querySelectorAll(
+          'clipPath[id*="corners-dot"]'
+        );
+
+        // Measure actual QR pattern bounds
+        let minX = Infinity,
+          minY = Infinity,
+          maxX = -Infinity,
+          maxY = -Infinity;
+
+        if (dotClipPath) {
+          const allRects = dotClipPath.querySelectorAll("rect");
+          allRects.forEach((rect) => {
+            const x = parseFloat(rect.getAttribute("x") || "0");
+            const y = parseFloat(rect.getAttribute("y") || "0");
+            const w = parseFloat(rect.getAttribute("width") || "0");
+            const h = parseFloat(rect.getAttribute("height") || "0");
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x + w);
+            maxY = Math.max(maxY, y + h);
+          });
+        }
+
+        // Also check corner squares for bounds
+        cornerSquarePaths.forEach((clipPath) => {
+          const path = clipPath.querySelector("path");
+          if (path) {
+            const d = path.getAttribute("d") || "";
+            const matches = d.matchAll(/M\s*([\d.]+)\s+([\d.]+)/g);
+            for (const match of matches) {
+              const x = parseFloat(match[1]);
+              const y = parseFloat(match[2]);
+              minX = Math.min(minX, x);
+              minY = Math.min(minY, y);
+              maxX = Math.max(maxX, x + 28); // Corner squares are ~28px
+              maxY = Math.max(maxY, y + 28);
+            }
+          }
+        });
+
+        const qrWidth = maxX - minX;
+        const qrHeight = maxY - minY;
+
+        // Calculate how to fit QR into target size with margin
+        const targetSize = $data.size - $data.margin * 2;
+        const scale = targetSize / Math.max(qrWidth, qrHeight);
+
+        // Calculate offset to center and add margin
+        const scaledWidth = qrWidth * scale;
+        const scaledHeight = qrHeight * scale;
+        const offsetX =
+          $data.margin + (targetSize - scaledWidth) / 2 - minX * scale;
+        const offsetY =
+          $data.margin + (targetSize - scaledHeight) / 2 - minY * scale;
+
+        const defs = svgElement.querySelector("defs");
+        const clippedRects = svgElement.querySelectorAll("rect[clip-path]");
+        clippedRects.forEach((rect) => rect.remove());
+        if (defs) defs.remove();
+
+        while (svgElement.firstChild) {
+          svgElement.removeChild(svgElement.firstChild);
+        }
+
+        // Add dots with scale and offset
+        if (dotClipPath) {
+          const dotRects = dotClipPath.querySelectorAll("rect");
+          dotRects.forEach((rect) => {
+            const newRect = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "rect"
+            );
+            const x =
+              parseFloat(rect.getAttribute("x") || "0") * scale + offsetX;
+            const y =
+              parseFloat(rect.getAttribute("y") || "0") * scale + offsetY;
+            const w = parseFloat(rect.getAttribute("width") || "0") * scale;
+            const h = parseFloat(rect.getAttribute("height") || "0") * scale;
+
+            newRect.setAttribute("x", x.toString());
+            newRect.setAttribute("y", y.toString());
+            newRect.setAttribute("width", w.toString());
+            newRect.setAttribute("height", h.toString());
+            newRect.setAttribute("fill", $data.color);
+            svgElement.appendChild(newRect);
+          });
+        }
+
+        // Add corner squares with transform
+        cornerSquarePaths.forEach((clipPath) => {
+          const path = clipPath.querySelector("path");
+          if (path) {
+            const newPath = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path"
+            );
+            newPath.setAttribute("d", path.getAttribute("d") || "");
+            newPath.setAttribute("fill", $data.color);
+            newPath.setAttribute("fill-rule", "evenodd");
+            newPath.setAttribute(
+              "transform",
+              `translate(${offsetX},${offsetY}) scale(${scale})`
+            );
+            svgElement.appendChild(newPath);
+          }
+        });
+
+        // Add corner dots with scale and offset
+        cornerDotPaths.forEach((clipPath) => {
+          const rect = clipPath.querySelector("rect");
+          if (rect) {
+            const newRect = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "rect"
+            );
+            const x =
+              parseFloat(rect.getAttribute("x") || "0") * scale + offsetX;
+            const y =
+              parseFloat(rect.getAttribute("y") || "0") * scale + offsetY;
+            const w = parseFloat(rect.getAttribute("width") || "0") * scale;
+            const h = parseFloat(rect.getAttribute("height") || "0") * scale;
+
+            newRect.setAttribute("x", x.toString());
+            newRect.setAttribute("y", y.toString());
+            newRect.setAttribute("width", w.toString());
+            newRect.setAttribute("height", h.toString());
+            newRect.setAttribute("fill", $data.color);
+            svgElement.appendChild(newRect);
+          }
+        });
+
+        // Set final SVG size
+        svgElement.setAttribute("width", $data.size.toString());
+        svgElement.setAttribute("height", $data.size.toString());
+        svgElement.setAttribute("viewBox", `0 0 ${$data.size} ${$data.size}`);
+
+        let svgText = new XMLSerializer().serializeToString(svgElement);
+
+        svgText = svgText
+          .replace(/<\?xml[^?]*\?>\s*/g, "")
+          .replace(/xmlns:xlink="[^"]*"/g, "")
+          .replace(/xlink:/g, "");
+
+        (window as any).postMessage(
+          "insertQRCode",
+          svgText,
+          $data.size,
+          $data.margin
+        );
       }
 
-      const svgText =
-        "text" in svgData ? await svgData.text() : svgData.toString();
-      (window as any).postMessage(
-        "insertQRCode",
-        svgText,
-        $data.size,
-        $data.margin
-      );
+      document.body.removeChild(tempContainer);
     } catch (error) {
       console.error("Error getting QR code:", error);
     }
@@ -165,12 +323,17 @@
         <iconify-icon
           icon="material-symbols:link-rounded"
           class="text-base text-muted"
+          title="URL"
         ></iconify-icon>
         <input
           id="url-input"
           type="text"
           class="w-full"
           name="url"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
         />
       </label>
       <div class="flex flex-row gap-3">
@@ -181,6 +344,7 @@
           <iconify-icon
             icon="material-symbols:format-color-fill-rounded"
             class="text-base text-muted"
+            title="Color"
           ></iconify-icon>
           <input
             id="color-input"
@@ -198,6 +362,7 @@
           <iconify-icon
             icon="material-symbols:open-in-full-rounded"
             class="text-base text-muted"
+            title="Size"
           ></iconify-icon>
           <input
             id="number-input"
@@ -214,6 +379,7 @@
           <iconify-icon
             icon="material-symbols:resize-rounded"
             class="text-base text-muted"
+            title="Margin"
           ></iconify-icon>
           <input
             id="margin-input"
@@ -229,7 +395,7 @@
       <button
         type="submit"
         disabled={!$isValid || isGenerating || !hasChangedSinceGenerate}
-        class="default">Update preview</button
+        class="default">Update</button
       >
       <button
         type="button"
