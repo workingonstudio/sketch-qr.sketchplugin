@@ -44,8 +44,8 @@ export function onOpen(context) {
   browserWindow = new BrowserWindow(options);
 
   // Listen for insertQRCode message from webview
-  browserWindow.webContents.on("insertQRCode", (svg, size, margin) => {
-    insertQRIntoSketch(context, svg, size, margin);
+  browserWindow.webContents.on("insertQRCode", (svg, size, margin, url) => {
+    insertQRIntoSketch(context, svg, size, margin, url);
   });
 
   // Load URL
@@ -71,7 +71,7 @@ export function onOpen(context) {
   });
 }
 
-function insertQRIntoSketch(context, svgString, size, margin) {
+function insertQRIntoSketch(context, svgString, size, margin, url) {
   const sketch = require("sketch/dom");
   const UI = require("sketch/ui");
 
@@ -82,7 +82,7 @@ function insertQRIntoSketch(context, svgString, size, margin) {
     const wrappedLayer = sketch.createLayerFromData(svgString, "svg");
 
     if (wrappedLayer && wrappedLayer.layers && wrappedLayer.layers.length > 0) {
-      wrappedLayer.name = "QR Code";
+      wrappedLayer.name = `QR - ${url}`;
 
       console.log(
         "Imported QR dimensions:",
