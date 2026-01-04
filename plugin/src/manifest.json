@@ -12,10 +12,16 @@
       "identifier": "openPlugin",
       "script": "main.js",
       "handler": "onOpen"
+    },
+    {
+      "name": "About",
+      "identifier": "about",
+      "script": "main.js",
+      "handler": "onAbout"
     }
   ],
   "menu": {
     "title": "QR Generator",
-    "items": ["openPlugin"]
+    "items": ["openPlugin", "-", "about"]
   }
 }

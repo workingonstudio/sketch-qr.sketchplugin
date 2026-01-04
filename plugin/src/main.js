@@ -1,6 +1,7 @@
 const BrowserWindow = require("sketch-module-web-view");
+const { showAbout } = require("./about.js");
 
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 let browserWindow = null;
 
@@ -69,6 +70,10 @@ export function onOpen(context) {
   browserWindow.on("closed", () => {
     browserWindow = null;
   });
+}
+
+export function onAbout(context) {
+  showAbout(context);
 }
 
 function insertQRIntoSketch(context, svgString, size, margin, url) {

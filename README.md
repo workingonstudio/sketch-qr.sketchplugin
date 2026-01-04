@@ -1,4 +1,4 @@
-# Sketch QR Generator
+# Sketch QR Code Generator
 
 Generate SVG QR codes from within Sketch.
 
