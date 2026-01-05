@@ -8,6 +8,7 @@ Generate SVG QR codes from within Sketch. Utilising [qr-code-styling](https://gi
 
 | Input      | Description                                                   |
 | ---------- | ------------------------------------------------------------- |
+| Preview    | This is just for the color, and testing the QR.               |
 | Url        | Enter the url you want the users to visit.                    |
 | Color      | Hex code for the color of the QR.                             |
 | Dimensions | Height and width of the QR.                                   |
@@ -15,7 +16,8 @@ Generate SVG QR codes from within Sketch. Utilising [qr-code-styling](https://gi
 
 ### Todo
 
-- [x] Initial release. 
+- [x] Initial release.
+- [ ] Insert on selected frame.
 - [ ] Save settings.
 - [ ] Space for logo.
 - [ ] Custom styles.

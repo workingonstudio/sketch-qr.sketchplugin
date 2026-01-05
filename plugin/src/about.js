@@ -11,7 +11,7 @@ export function showAbout(context) {
     "Version 1.0.0\n\nQR Code Generator for Sketch\n\nCreated by workingon.studio"
   );
   alert.addButtonWithTitle("OK");
-  alert.addButtonWithTitle("Releases");
+  alert.addButtonWithTitle("Github");
 
   // Load and set custom icon
   const image = NSImage.alloc().initWithContentsOfFile(iconPath);
