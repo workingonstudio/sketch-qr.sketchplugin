@@ -1,6 +1,24 @@
-# Sketch QR Code Generator
+# QR Code Generator Sketch Plugin
 
-Generate SVG QR codes from within Sketch.
+Generate SVG QR codes from within Sketch. Utilising [qr-code-styling](https://github.com/kozakdenys/qr-code-styling) for QR creation.
+
+![Screenshot](.github/images/screenshot.png)
+
+### Options
+
+| Input      | Description                                                   |
+| ---------- | ------------------------------------------------------------- |
+| Url        | Enter the url you want the users to visit.                    |
+| Color      | Hex code for the color of the QR.                             |
+| Dimensions | Height and width of the QR.                                   |
+| Padding    | Padding added to the SVG (this is taken from the dimensions.) |
+
+### Todo
+
+- [x] Initial release. 
+- [ ] Save settings.
+- [ ] Space for logo.
+- [ ] Custom styles.
 
 ## Development
 
