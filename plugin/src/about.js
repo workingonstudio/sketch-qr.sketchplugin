@@ -2,7 +2,7 @@ export function showAbout(context) {
   // Get the path to the plugin's resources
   const scriptPath = context.scriptPath;
   const pluginPath = scriptPath.split("/Contents/Sketch/")[0];
-  const iconPath = `${pluginPath}/Contents/Resources/icon.png`;
+  const iconPath = `${pluginPath}/Contents/Resources/about-icon.png`;
 
   // Create native macOS alert
   const alert = NSAlert.alloc().init();

@@ -11,6 +11,7 @@
     "main": "sketch-qr.sketchplugin",
     "assets": [
       "src/icon.png",
+      "src/about-icon.png",
       "../ui/dist/**/*"
     ]
   },
