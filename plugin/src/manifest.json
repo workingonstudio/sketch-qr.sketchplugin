@@ -5,6 +5,7 @@
   "icon": "icon.png",
   "version": "1.0.0",
   "identifier": "studio.workingon.sketch-qr",
+  "appcast": "https://raw.githubusercontent.com/workingonstudio/sketch-qr.sketchplugin/main/appcast.json",
   "compatibleVersion": "3",
   "bundleVersion": 1,
   "commands": [
