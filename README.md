@@ -12,7 +12,7 @@ Generate SVG QR codes from within Sketch. Utilising [qr-code-styling](https://gi
 | Url        | Enter the url you want the users to visit.                    |
 | Color      | Hex code for the color of the QR.                             |
 | Dimensions | Height and width of the QR.                                   |
-| Padding    | Padding added to the SVG (this is taken from the dimensions.) |
+| Padding    | Padding added to the SVG (this is taken from the dimensions). |
 
 ### Todo
 
