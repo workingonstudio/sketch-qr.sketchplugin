@@ -1,7 +1,7 @@
 const BrowserWindow = require("sketch-module-web-view");
 const { showAbout } = require("./about.js");
 
-const DEV_MODE = false;
+const DEV_MODE = true;
 
 let browserWindow = null;
 

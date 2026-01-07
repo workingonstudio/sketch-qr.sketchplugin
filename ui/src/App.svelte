@@ -98,16 +98,16 @@
   <div class="flex flex-col items-center relative">
     <div
       bind:this={qrContainer}
-      class="flex border border-border rounded-lg size-37.5 items-center justify-center overflow-hidden p-2"
+      class="flex border border-border dark:bg-white dark:border-zinc-950 rounded-lg size-37.5 items-center justify-center overflow-hidden p-2"
     />
 
     {#if isGenerating}
       <div
-        class="absolute inset-0 bg-white flex items-center justify-center rounded-lg"
+        class="absolute inset-0 bg-white dark:bg-zinc-900 flex items-center justify-center rounded-lg"
       >
         <iconify-icon
           icon="lucide:loader-circle"
-          class="text-2xl animate-spin text-gray-600"
+          class="text-2xl animate-spin text-gray-600 dark:text-zinc-100"
         />
       </div>
     {/if}
@@ -123,7 +123,7 @@
       >
         <iconify-icon
           icon="material-symbols:link-rounded"
-          class="text-base text-muted"
+          class="text-base text-muted dark:text-zinc-300"
           title="URL"
         ></iconify-icon>
         <input
@@ -144,7 +144,7 @@
         >
           <iconify-icon
             icon="material-symbols:format-color-fill-rounded"
-            class="text-base text-muted"
+            class="text-base text-muted dark:text-zinc-300"
             title="Color"
           ></iconify-icon>
           <input
@@ -162,7 +162,7 @@
         >
           <iconify-icon
             icon="material-symbols:open-in-full-rounded"
-            class="text-base text-muted"
+            class="text-base text-muted dark:text-zinc-300"
             title="Size"
           ></iconify-icon>
           <input
@@ -179,7 +179,7 @@
         >
           <iconify-icon
             icon="material-symbols:fullscreen-rounded"
-            class="text-base text-muted"
+            class="text-base text-muted dark:text-zinc-300"
             title="Margin"
           ></iconify-icon>
           <input
@@ -196,7 +196,8 @@
       <button
         type="submit"
         disabled={!$isValid || isGenerating || !hasChangedSinceGenerate}
-        class="default">Update</button
+        class="default border-stone-200 bg-stone-100 inset-ring-stone-50 disabled:hover:bg-transparent dark:text-zinc-50 dark:bg-zinc-900 dark:border-zinc-950 dark:inset-ring-zinc-700 dark:hover:bg-zinc-950"
+        >Update</button
       >
       <button
         type="button"
@@ -212,22 +213,13 @@
 
 <style>
   @reference "./app.css";
-  label {
-    @apply flex flex-row items-center gap-2 border border-border p-3 rounded-lg inset-shadow-sm;
-    &:focus-within {
-      @apply ring ring-blue-500;
-    }
-  }
   input {
     @apply font-bold outline-0 text-sm;
   }
   button {
     @apply rounded-xl px-3 py-2.5 font-bold text-sm cursor-pointer;
     &.default {
-      @apply border border-stone-200 bg-stone-100 inset-ring inset-ring-stone-50;
-      &:hover:not(:disabled) {
-        @apply bg-stone-200/50;
-      }
+      @apply border inset-ring;
     }
     &.primary {
       @apply border bg-emerald-600 border-emerald-700 inset-ring inset-ring-emerald-500 text-white text-shadow-2xs text-shadow-emerald-700;
