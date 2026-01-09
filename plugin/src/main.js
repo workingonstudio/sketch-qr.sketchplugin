@@ -22,6 +22,23 @@ export function onOpen(context) {
   }
   browserWindow = null;
 
+  let isDark = false;
+  try {
+    // Access Sketch's NSApp directly
+    const appearance = NSApp.effectiveAppearance();
+    const appearanceName = String(appearance.name());
+
+    console.log("🎨 Sketch Appearance:", appearanceName);
+
+    isDark = appearanceName.toLowerCase().includes("dark");
+
+    console.log("🎨 isDark:", isDark);
+    console.log("🎨 Setting background to:", isDark ? "#18181b" : "#FFFFFF");
+  } catch (e) {
+    console.log("❌ Could not detect Sketch appearance:", e);
+    console.log("🎨 Defaulting to light mode");
+  }
+
   // Browser window options
   const options = {
     identifier: "studio.workingon.plugin.webview",
@@ -30,7 +47,7 @@ export function onOpen(context) {
     show: false,
     alwaysOnTop: true,
     titleBarStyle: "default",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: isDark ? "#18181b" : "#FFFFFF",
     hasShadow: true,
     acceptsFirstMouse: true,
     resizable: false,
