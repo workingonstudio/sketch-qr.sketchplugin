@@ -2,7 +2,7 @@
   "name": "QR Generator",
   "description": "Generate SVG QR codes from within Sketch.",
   "homepage": "https://github.com/workingonstudio/sketch-qr.sketchplugin",
-  "download": "https://github.com/workingonstudio/sketch-qr.sketchplugin/releases/latest/download/sketch-qr.sketchplugin.zip",
-  "version": "1.1.0",
+  "downloadURL": "https://github.com/workingonstudio/sketch-qr.sketchplugin/releases/latest/download/sketch-qr.sketchplugin.zip",
+  "versionID": "1.1.0",
   "releasedAt": "2026-01-19T14:53:00Z"
 }
