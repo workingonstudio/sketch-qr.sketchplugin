@@ -1,9 +1,31 @@
 const BrowserWindow = require("sketch-module-web-view");
 const { showAbout } = require("./about.js");
+const Settings = require("sketch/settings");
 
 const DEV_MODE = true;
 
 let browserWindow = null;
+
+// Settings management
+const SETTINGS_KEY = "studio.workingon.qrcode.settings";
+
+const DEFAULT_SETTINGS = {
+  url: "https://wo.studio",
+  color: "#000000",
+  size: 150,
+  margin: 0,
+};
+
+function getSettings() {
+  const saved = Settings.settingForKey(SETTINGS_KEY);
+  console.log("📖 Loading settings:", saved);
+  return saved ? { ...DEFAULT_SETTINGS, ...saved } : DEFAULT_SETTINGS;
+}
+
+function saveSettings(settings) {
+  console.log("💾 Saving settings:", settings);
+  Settings.setSettingForKey(SETTINGS_KEY, settings);
+}
 
 export function onOpen(context) {
   const sketch = require("sketch/dom");
@@ -24,22 +46,14 @@ export function onOpen(context) {
 
   let isDark = false;
   try {
-    // Access Sketch's NSApp directly
     const appearance = NSApp.effectiveAppearance();
     const appearanceName = String(appearance.name());
 
-    console.log("🎨 Sketch Appearance:", appearanceName);
-
     isDark = appearanceName.toLowerCase().includes("dark");
-
-    console.log("🎨 isDark:", isDark);
-    console.log("🎨 Setting background to:", isDark ? "#18181b" : "#FFFFFF");
   } catch (e) {
     console.log("❌ Could not detect Sketch appearance:", e);
-    console.log("🎨 Defaulting to light mode");
   }
 
-  // Browser window options
   const options = {
     identifier: "studio.workingon.plugin.webview",
     width: 420,
@@ -61,29 +75,37 @@ export function onOpen(context) {
 
   browserWindow = new BrowserWindow(options);
 
+  // Listen for settings updates from webview
+  browserWindow.webContents.on("saveSettings", (settings) => {
+    saveSettings(settings);
+  });
+
   // Listen for insertQRCode message from webview
   browserWindow.webContents.on("insertQRCode", (svg, size, margin, url) => {
     insertQRIntoSketch(context, svg, size, margin, url);
   });
 
+  browserWindow.webContents.on("did-finish-load", () => {
+    const savedSettings = getSettings();
+    browserWindow.webContents.executeJavaScript(
+      `window.initialSettings = ${JSON.stringify(savedSettings)};`,
+    );
+  });
+
   // Load URL
   if (DEV_MODE) {
     browserWindow.loadURL("http://localhost:5173");
-    console.log("🔥 DEV MODE - Loading from localhost:5173");
   } else {
     const scriptPath = context.scriptPath;
     const pluginPath = scriptPath.split("/Contents/Sketch/")[0];
     const htmlPath = `${pluginPath}/Contents/Resources/ui/dist/index.html`;
     browserWindow.loadURL(`file://${htmlPath}`);
-    console.log("📦 PRODUCTION - Loading from:", htmlPath);
   }
 
-  // Show window when ready (prevents flash)
   browserWindow.once("ready-to-show", () => {
     browserWindow.show();
   });
 
-  // Clean up on close
   browserWindow.on("closed", () => {
     browserWindow = null;
   });
@@ -107,18 +129,9 @@ function insertQRIntoSketch(context, svgString, size, margin, url) {
     if (wrappedLayer && wrappedLayer.layers && wrappedLayer.layers.length > 0) {
       wrappedLayer.name = `QR - ${url}`;
 
-      console.log(
-        "Imported QR dimensions:",
-        wrappedLayer.frame.width,
-        "x",
-        wrappedLayer.frame.height,
-      );
-
-      // Insert based on selection
       if (selection.length > 0) {
         const selectedLayer = selection.layers[0];
 
-        // Insert into the selected layer at 0,0
         selectedLayer.layers.push(wrappedLayer);
         wrappedLayer.frame.x = 0;
         wrappedLayer.frame.y = 0;
@@ -127,7 +140,6 @@ function insertQRIntoSketch(context, svgString, size, margin, url) {
           `✓ QR Code inserted into ${selectedLayer.name} (${size}x${size}px with ${margin}px margin)`,
         );
       } else {
-        // No selection - insert on page
         selectedPage.layers.push(wrappedLayer);
         wrappedLayer.frame.x = 0;
         wrappedLayer.frame.y = 0;

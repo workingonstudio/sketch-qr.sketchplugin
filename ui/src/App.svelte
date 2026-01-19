@@ -20,7 +20,9 @@
     margin: yup.number().required(),
   });
 
-  const { form, data, isValid } = createForm<yup.InferType<typeof schema>>({
+  const { form, data, isValid, setFields } = createForm<
+    yup.InferType<typeof schema>
+  >({
     initialValues: {
       url: "https://wo.studio",
       color: "#000000",
@@ -38,12 +40,42 @@
 
   $: if ($data) {
     hasChangedSinceGenerate = true;
+    saveSettings();
   }
 
   onMount(() => {
-    qrCode = createPreviewQR($data.url, $data.color, PREVIEW_SIZE);
-    qrCode.append(qrContainer);
+    // Load settings if they exist
+    if ((window as any).initialSettings) {
+      const settings = (window as any).initialSettings;
+      console.log("📥 Loaded settings:", settings);
+
+      setFields({
+        url: settings.url,
+        color: settings.color,
+        size: settings.size,
+        margin: settings.margin,
+      });
+
+      hasChangedSinceGenerate = false;
+    }
+
+    // Create and append QR code preview
+    if (qrContainer) {
+      qrCode = createPreviewQR($data.url, $data.color, PREVIEW_SIZE);
+      qrCode.append(qrContainer);
+    }
   });
+
+  function saveSettings() {
+    const settings = {
+      url: $data.url,
+      color: $data.color,
+      size: $data.size,
+      margin: $data.margin,
+    };
+
+    (window as any).postMessage("saveSettings", settings);
+  }
 
   async function generateQRCode(values: yup.InferType<typeof schema>) {
     await new Promise((resolve) => setTimeout(resolve, 500));
