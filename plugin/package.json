@@ -1,6 +1,6 @@
 {
   "name": "sketch-qr-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate SVG QR codes from within Sketch. - Plugin",
   "main": "sketch-qr.sketchplugin",
   "author": "workingon.studio",

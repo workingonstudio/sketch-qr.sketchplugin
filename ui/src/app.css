@@ -35,4 +35,14 @@ body {
   background: var(--color-bg);
   @apply h-dvh;
   @apply p-6;
+  @apply dark:bg-zinc-900 dark:text-zinc-50;
+}
+
+@layer components {
+  label {
+    @apply flex flex-row items-center gap-2 border border-gray-300 dark:border-zinc-600 dark:bg-zinc-950 p-3 rounded-lg inset-shadow-sm;
+    &:focus-within {
+      @apply ring ring-blue-500;
+    }
+  }
 }

@@ -17,8 +17,8 @@ Generate SVG QR codes from within Sketch. Utilising [qr-code-styling](https://gi
 ### Todo
 
 - [x] Initial release.
-- [ ] Insert on selected frame.
-- [ ] Save settings.
+- [x] Insert on selected frame.
+- [x] Save settings.
 - [ ] Space for logo.
 - [ ] Custom styles.
 
