@@ -8,7 +8,7 @@ export function showAbout(context) {
   const alert = NSAlert.alloc().init();
   alert.setMessageText("QR Code Generator");
   alert.setInformativeText(
-    "Version 1.0.0\n\nQR Code Generator for Sketch\n\nCreated by workingon.studio"
+    "Version 1.1.0\n\nQR Code Generator for Sketch\n\nCreated by workingon.studio",
   );
   alert.addButtonWithTitle("OK");
   alert.addButtonWithTitle("Github");
@@ -25,7 +25,7 @@ export function showAbout(context) {
   if (response === 1001) {
     const workspace = NSWorkspace.sharedWorkspace();
     const url = NSURL.URLWithString(
-      "https://github.com/workingonstudio/sketch-qr.sketchplugin"
+      "https://github.com/workingonstudio/sketch-qr.sketchplugin",
     );
     workspace.openURL(url);
   }
