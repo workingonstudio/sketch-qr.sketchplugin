@@ -110,13 +110,13 @@ function insertQRIntoSketch(context, svgString, size, margin, url) {
         "Imported QR dimensions:",
         wrappedLayer.frame.width,
         "x",
-        wrappedLayer.frame.height
+        wrappedLayer.frame.height,
       );
 
       selectedPage.layers.push(wrappedLayer);
 
       UI.message(
-        `✓ QR Code inserted (${size}x${size}px with ${margin}px margin)`
+        `✓ QR Code inserted (${size}x${size}px with ${margin}px margin)`,
       );
     } else {
       UI.message("✗ SVG imported but contains no layers");

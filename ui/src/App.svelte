@@ -86,7 +86,7 @@
         svgText,
         $data.size,
         $data.margin,
-        $data.url
+        $data.url,
       );
     } catch (error) {
       console.error("Error generating QR code:", error);
