@@ -44,19 +44,25 @@
   }
 
   onMount(() => {
-    // Load settings if they exist
-    if ((window as any).initialSettings) {
+    // Load settings if available
+    const loadSettings = () => {
       const settings = (window as any).initialSettings;
-      console.log("📥 Loaded settings:", settings);
+      if (settings) {
+        setFields({
+          url: settings.url,
+          color: settings.color,
+          size: settings.size,
+          margin: settings.margin,
+        });
+        hasChangedSinceGenerate = false;
+        return true;
+      }
+      return false;
+    };
 
-      setFields({
-        url: settings.url,
-        color: settings.color,
-        size: settings.size,
-        margin: settings.margin,
-      });
-
-      hasChangedSinceGenerate = false;
+    // Try loading immediately, retry once if not available
+    if (!loadSettings()) {
+      setTimeout(loadSettings, 100);
     }
 
     // Create and append QR code preview

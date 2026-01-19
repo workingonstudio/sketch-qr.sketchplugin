@@ -2,7 +2,7 @@ const BrowserWindow = require("sketch-module-web-view");
 const { showAbout } = require("./about.js");
 const Settings = require("sketch/settings");
 
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 let browserWindow = null;
 
@@ -18,12 +18,10 @@ const DEFAULT_SETTINGS = {
 
 function getSettings() {
   const saved = Settings.settingForKey(SETTINGS_KEY);
-  console.log("📖 Loading settings:", saved);
   return saved ? { ...DEFAULT_SETTINGS, ...saved } : DEFAULT_SETTINGS;
 }
 
 function saveSettings(settings) {
-  console.log("💾 Saving settings:", settings);
   Settings.setSettingForKey(SETTINGS_KEY, settings);
 }
 
@@ -85,6 +83,7 @@ export function onOpen(context) {
     insertQRIntoSketch(context, svg, size, margin, url);
   });
 
+  // Inject settings when webview is ready
   browserWindow.webContents.on("did-finish-load", () => {
     const savedSettings = getSettings();
     browserWindow.webContents.executeJavaScript(
