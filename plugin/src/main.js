@@ -100,6 +100,7 @@ function insertQRIntoSketch(context, svgString, size, margin, url) {
   try {
     const document = sketch.getSelectedDocument();
     const selectedPage = document.selectedPage;
+    const selection = document.selectedLayers;
 
     const wrappedLayer = sketch.createLayerFromData(svgString, "svg");
 
@@ -113,11 +114,28 @@ function insertQRIntoSketch(context, svgString, size, margin, url) {
         wrappedLayer.frame.height,
       );
 
-      selectedPage.layers.push(wrappedLayer);
+      // Insert based on selection
+      if (selection.length > 0) {
+        const selectedLayer = selection.layers[0];
 
-      UI.message(
-        `✓ QR Code inserted (${size}x${size}px with ${margin}px margin)`,
-      );
+        // Insert into the selected layer at 0,0
+        selectedLayer.layers.push(wrappedLayer);
+        wrappedLayer.frame.x = 0;
+        wrappedLayer.frame.y = 0;
+
+        UI.message(
+          `✓ QR Code inserted into ${selectedLayer.name} (${size}x${size}px with ${margin}px margin)`,
+        );
+      } else {
+        // No selection - insert on page
+        selectedPage.layers.push(wrappedLayer);
+        wrappedLayer.frame.x = 0;
+        wrappedLayer.frame.y = 0;
+
+        UI.message(
+          `✓ QR Code inserted (${size}x${size}px with ${margin}px margin)`,
+        );
+      }
     } else {
       UI.message("✗ SVG imported but contains no layers");
     }
