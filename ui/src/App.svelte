@@ -44,6 +44,12 @@
   }
 
   onMount(() => {
+    // Create QR code preview first
+    if (qrContainer) {
+      qrCode = createPreviewQR($data.url, $data.color, PREVIEW_SIZE);
+      qrCode.append(qrContainer);
+    }
+
     // Load settings if available
     const loadSettings = () => {
       const settings = (window as any).initialSettings;
@@ -54,6 +60,29 @@
           size: settings.size,
           margin: settings.margin,
         });
+
+        // Update the preview QR code with loaded settings
+        if (qrCode) {
+          qrCode.update({
+            data: settings.url,
+            width: PREVIEW_SIZE,
+            height: PREVIEW_SIZE,
+            margin: 0,
+            dotsOptions: {
+              color: settings.color,
+              type: "square",
+            },
+            cornersSquareOptions: {
+              color: settings.color,
+              type: "square",
+            },
+            cornersDotOptions: {
+              color: settings.color,
+              type: "square",
+            },
+          });
+        }
+
         hasChangedSinceGenerate = false;
         return true;
       }
@@ -63,12 +92,6 @@
     // Try loading immediately, retry once if not available
     if (!loadSettings()) {
       setTimeout(loadSettings, 100);
-    }
-
-    // Create and append QR code preview
-    if (qrContainer) {
-      qrCode = createPreviewQR($data.url, $data.color, PREVIEW_SIZE);
-      qrCode.append(qrContainer);
     }
   });
 
